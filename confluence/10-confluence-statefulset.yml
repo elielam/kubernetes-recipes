@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: confluence
+  namespace: confluence
+  labels:
+    app: confluence
+    type: statefulset
+spec:
+  serviceName: "confluence"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: confluence
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: confluence
+        type: pod
+    spec:
+      containers:
+      - name: confluence
+        image: atlassian/confluence-server:latest
+        ports:
+        - containerPort: 8090
+        env:
+        - name: ATL_DB_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: ATL_DB_TYPE
+        - name: ATL_JDBC_URL 
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: ATL_JDBC_URL
+        - name: ATL_JDBC_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: ATL_JDBC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD    
+        - name: JVM_MINIMUM_MEMORY
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: JVM_MINIMUM_MEMORY
+        - name: JVM_MAXIMUM_MEMORY
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: JVM_MAXIMUM_MEMORY
+        - name: ATL_PROXY_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: ATL_PROXY_PORT
+        - name: ATL_TOMCAT_PORT 
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: ATL_TOMCAT_PORT 
+        - name: ATL_TOMCAT_SCHEME  
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: ATL_TOMCAT_SCHEME  
+        - name: ATL_TOMCAT_SECURE  
+          valueFrom:
+            configMapKeyRef:
+              name: confluence
+              key: ATL_TOMCAT_SECURE
+        volumeMounts:
+        - mountPath: "/var/atlassian/application-data/confluence"
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data

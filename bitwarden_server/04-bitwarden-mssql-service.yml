@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql
+  namespace: bitwarden
+  labels:
+    app: mssql
+    type: service
+spec:
+  selector:
+    app: mssql
+    type: pod
+  ports:
+  - name: mssql
+    port: 1433

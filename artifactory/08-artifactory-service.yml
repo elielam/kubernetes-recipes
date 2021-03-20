@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: artifactory
+  namespace: artifactory
+  labels:
+    app: artifactory
+    type: service
+spec:
+  selector:
+    app: artifactory
+    type: pod
+  ports:
+    - port: 8081
+      name: artifactory

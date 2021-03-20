@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: notifications
+  namespace: bitwarden
+  labels:
+    app: notifications
+    type: statefulset
+spec:
+  serviceName: "notifications"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: notifications
+        type: pod
+    spec:
+      containers:
+      - name: notifications
+        image: bitwarden/notifications:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/ssl
+          name: ssl
+        # - mountPath: /etc/bitwarden/logs
+        #   name: ssl-logs
+      volumes:
+      - name: ssl
+        persistentVolumeClaim:
+          claimName: ssl

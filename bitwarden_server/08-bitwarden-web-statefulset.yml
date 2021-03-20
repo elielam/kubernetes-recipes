@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+  namespace: bitwarden
+  labels:
+    app: web
+    type: statefulset
+spec:
+  serviceName: "web"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: web
+        type: pod
+    spec:
+      containers:
+      - name: web
+        image: bitwarden/web
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/web
+          name: web
+      volumes:
+      - name: web
+        persistentVolumeClaim:
+          claimName: web

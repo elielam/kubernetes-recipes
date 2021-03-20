@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nginx
+  namespace: bitwarden
+  labels:
+    app: nginx
+    type: statefulset
+spec:
+  serviceName: "nginx"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: nginx
+        type: pod
+    spec:
+      containers:
+      - name: nginx
+        image: bitwarden/nginx
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /etc/bitwarden/nginx
+          name: nginx
+        - mountPath: /var/log/nginx/
+          name: logs
+      volumes:
+      - name: nginx
+        configMap:
+          name: nginx
+      - name: logs
+        persistentVolumeClaim:
+          claimName: logs

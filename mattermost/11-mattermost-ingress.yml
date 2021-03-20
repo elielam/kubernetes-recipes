@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mattermost
+  namespace: mattermost
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.allow-http: "false"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+spec:
+  tls:
+  - hosts:
+      - "mattermost.domain.tld"
+    secretName: "mattermost-tls"
+  rules:
+  - host: "mattermost.domain.tld"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "mattermost"
+            port:
+              number: 8065

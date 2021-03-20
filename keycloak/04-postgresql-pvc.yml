@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db
+  namespace: keycloak
+  labels:
+    app: postgres
+    type: persistentvolumeclaim
+spec:
+  storageClassName: keycloak
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi

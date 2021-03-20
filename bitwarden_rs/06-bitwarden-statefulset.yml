@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bitwarden
+  namespace: bitwarden
+  labels:
+    app: bitwarden
+    type: statefulset
+spec:
+  serviceName: "bitwarden"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bitwarden
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: bitwarden
+        type: pod
+    spec:
+      containers:
+      - name: bitwarden
+        image: bitwardenrs/server:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: "SIGNUPS_ALLOWED"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SIGNUPS_ALLOWED
+        - name: "INVITATIONS_ALLOWED"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: INVITATIONS_ALLOWED
+        - name: "SERVER_ADMIN_EMAIL"
+          valueFrom:
+            secretKeyRef:
+              name: bitwarden
+              key: SERVER_ADMIN_EMAIL
+        - name: "DOMAIN"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: DOMAIN
+        - name: "SMTP_HOST"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SMTP_HOST
+        - name: "SMTP_FROM"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SMTP_FROM
+        - name: "SMTP_PORT"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SMTP_PORT
+        - name: "SMTP_SSL"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SMTP_SSL
+        - name: "SMTP_USERNAME"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SMTP_USERNAME
+        - name: "SMTP_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: bitwarden
+              key: SMTP_PASSWORD
+        - name: "SHOW_PASSWORD_HINT"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: SHOW_PASSWORD_HINT
+        - name: "WEB_VAULT_ENABLED"
+          valueFrom:
+            configMapKeyRef:
+              name: bitwarden
+              key: WEB_VAULT_ENABLED
+        volumeMounts:
+          - name: data
+            mountPath: /data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data

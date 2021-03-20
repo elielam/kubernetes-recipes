@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab
+  namespace: gitlab
+  labels:
+    app: gitlab
+    type: configmap
+data:
+  GITLAB_HOST: https://gitlab.domain.tld
+  GITLAB_DATABASE_HOST: postgres
+  GITLAB_DATABASE_ADAPTER: postgresql
+  GITLAB_DATABASE_PORT: "5432"
+  CONFIG.RB: |

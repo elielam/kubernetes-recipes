@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+    type: configmap
+data:
+  POSTGRES_HOST: postgres
+  REDIS_HOST: redis
+  REDIS_HOST_PORT: "6379"
+  NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.domain.tld
+  # custom.config.php: |
+  #   'overwriteprotocol' => 'https'

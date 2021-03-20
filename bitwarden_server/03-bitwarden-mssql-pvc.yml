@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql
+  namespace: bitwarden
+  labels:
+    app: mysql
+    type: persistentvolumeclaim
+spec:
+  storageClassName: bitwarden
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

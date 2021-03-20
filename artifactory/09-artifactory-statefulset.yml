@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: artifactory
+  namespace: artifactory
+  labels:
+    app: artifactory
+    type: statefulset
+spec:
+  serviceName: "artifactory"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artifactory
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: artifactory
+        type: pod
+    spec:
+      containers:
+      - name: artifactory
+        image: docker.bintray.io/jfrog/artifactory-pro:6.0.0
+        env:
+        - name: DB_TYPE
+          value: postgresql  
+        - name: DB_HOST
+          value: postgres
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD  
+        - name: EXTRA_JAVA_OPTIONS
+          value: -Xms512m -Xmx4g                          
+        ports:
+        - containerPort: 8081
+        volumeMounts:
+        - mountPath: "/var/opt/jfrog/artifactory"
+          name: config
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: config

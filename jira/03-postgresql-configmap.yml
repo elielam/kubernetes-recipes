@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres
+  namespace: jira
+  labels:
+    app: postgres
+    type: configmap
+data:
+  POSTGRES_DB: jira
+  POSTGRES_USER: jira

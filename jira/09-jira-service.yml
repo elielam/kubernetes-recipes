@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jira
+  namespace: jira
+  labels:
+    app: jira
+    type: service
+spec:
+  selector:
+    app: jira
+    type: pod
+  ports:
+    - port: 8080
+      name: jira

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sonarqube
+  namespace: sonarqube
+  labels:
+    app: sonarqube
+    type: configmap
+data:
+  SONAR_JDBC_URL: jdbc:postgresql://postgres/sonarqube

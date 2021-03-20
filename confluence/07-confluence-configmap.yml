@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: confluence
+  namespace: confluence
+  labels:
+    app: confluence
+    type: configmap
+data:
+  ATL_DB_TYPE: "postgresql"
+  ATL_JDBC_URL: "jdbc:postgresql://postgres:5432/confluence"
+  JVM_MINIMUM_MEMORY: "2048m"
+  JVM_MAXIMUM_MEMORY: "4096m"
+  ATL_PROXY_PORT: "443"
+  ATL_TOMCAT_PORT: "8090"
+  ATL_TOMCAT_SCHEME: "https"
+  ATL_TOMCAT_SECURE: "true"
+      

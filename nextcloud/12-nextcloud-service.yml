@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+    type: service
+spec:
+  selector:
+    app: nextcloud
+    type: pod
+  ports:
+    - port: 80
+      name: http

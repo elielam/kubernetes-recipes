@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres
+  namespace: owncloud
+  labels:
+    app: postgres
+    type: configmap
+data:
+  POSTGRES_DB: owncloud
+  POSTGRES_USER: owncloud

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: bitwarden
+  labels:
+    app: bitwarden
+    type: persistentvolumeclaim
+spec:
+  storageClassName: bitwarden
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

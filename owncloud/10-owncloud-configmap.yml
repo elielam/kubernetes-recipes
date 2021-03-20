@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: owncloud
+  namespace: owncloud
+  labels:
+    app: owncloud
+    type: configmap
+data:
+  HTTP_PORT: "8080"
+  OWNCLOUD_DOMAIN: "owncloud.domain.tld"
+  OWNCLOUD_DB_TYPE: pgsql
+  OWNCLOUD_DB_HOST: postgres
+  OWNCLOUD_ADMIN_USERNAME: "admin"
+  OWNCLOUD_REDIS_ENABLED: "false"
+  OWNCLOUD_REDIS_SEEDS: "redis"
+  OWNCLOUD_REDIS_FAILOVER_MODE: "FAILOVER_DISTRIBUTE"
+  OWNCLOUD_SKIP_CHOWN: "false"
+  OWNCLOUD_BACKGROUND_MODE: "webcron"

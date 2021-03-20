@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: api
+  namespace: bitwarden
+  labels:
+    app: api
+    type: statefulset
+spec:
+  serviceName: "api"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: api
+        type: pod
+    spec:
+      containers:
+      - name: api
+        image: bitwarden/api:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/core
+          name: core
+        - mountPath: /etc/bitwarden/ssl
+          name: ssl
+        # - mountPath: /etc/bitwarden/logs
+        #   name: api-logs
+      volumes:
+      - name: core
+        persistentVolumeClaim:
+          claimName: core
+      - name: ssl
+        persistentVolumeClaim:
+          claimName: ssl

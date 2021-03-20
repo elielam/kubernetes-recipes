@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: owncloud
+  namespace: owncloud
+  labels:
+    app: owncloud
+    type: statefulset
+spec:
+  serviceName: "owncloud"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: owncloud
+      type: pod
+  template:
+    metadata:
+      labels:
+        app: owncloud
+        type: pod
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - owncloud
+      containers:
+      - name: owncloud
+        image: owncloud/server:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: owncloud
+        env:
+        - name: OWNCLOUD_ADMIN_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_ADMIN_USERNAME
+        - name: OWNCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_ADMIN_PASSWORD
+        - name: HTTP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: HTTP_PORT
+        - name: OWNCLOUD_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_DOMAIN
+        - name: OWNCLOUD_DB_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_DB_TYPE
+        - name: OWNCLOUD_DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_DB_HOST
+        - name: OWNCLOUD_REDIS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_REDIS_ENABLED
+        - name: OWNCLOUD_REDIS_SEEDS
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_REDIS_SEEDS
+        - name: OWNCLOUD_REDIS_FAILOVER_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_REDIS_FAILOVER_MODE
+        - name: OWNCLOUD_SKIP_CHOWN
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_SKIP_CHOWN
+        - name: OWNCLOUD_BACKGROUND_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: OWNCLOUD_BACKGROUND_MODE
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: POSTGRES_HOST
+        - name: OWNCLOUD_DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_DB
+        - name: OWNCLOUD_DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_HOST
+        - name: OWNCLOUD_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        volumeMounts:
+        - name: data
+          mountPath: /mnt/data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data

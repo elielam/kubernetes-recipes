@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sonarqube
+  namespace: sonarqube
+  labels:
+    app: sonarqube
+    type: statefulset
+spec:
+  serviceName: "sonarqube"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube
+      type: pod   
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+        type: pod
+    spec:
+      containers:
+      - name: sonarqube
+        image: sonarqube:latest
+        ports:
+        - containerPort: 9000
+        env:
+        - name: "SONAR_JDBC_URL"
+          valueFrom:
+            configMapKeyRef:
+              name: sonarqube
+              key: SONARQUBE_JDBC_URL
+        - name: "SONAR_JDBC_USERNAME"
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: "SONAR_JDBC_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD
+        volumeMounts:
+        - mountPath: "/opt/sonarqube/data/"
+          name: data
+        - mountPath: "/opt/sonarqube/extensions/"
+          name: extensions
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+      - name: extensions
+        persistentVolumeClaim:
+          claimName: extensions

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: confluence
+  labels:
+    app: confluence
+    type: persistentvolumeclaim
+spec:
+  storageClassName: confluence
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

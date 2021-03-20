@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+    type: persistentvolumeclaim
+spec:
+  storageClassName: nextcloud
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+    type: persistentvolumeclaim
+spec:
+  storageClassName: nextcloud
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi

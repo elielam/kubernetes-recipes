@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mattermost
+  namespace: mattermost
+  labels:
+    app: mattermost
+    type: statefulset
+spec:
+  serviceName: "mattermost"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mattermost
+      type: pod
+  template:
+    metadata:
+      labels:
+        app: mattermost
+        type: pod
+    spec:
+      containers:
+      - name: mattermost
+        image: mattermost/mattermost-team-edition:latest
+        ports:
+        - containerPort: 8065
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: mattermost
+              key: DB_HOST
+        - name: DB_PORT_NUMBER
+          valueFrom:
+            configMapKeyRef:
+              name: mattermost
+              key: DB_PORT_NUMBER
+        - name: MM_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD
+        - name: MM_DBNAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_DB
+        - name: MM_SQLSETTINGS_DATASOURCE
+          valueFrom:
+            configMapKeyRef:
+              name: mattermost
+              key: MM_SQLSETTINGS_DATASOURCE
+        volumeMounts:
+        - mountPath: /mattermost/data
+          name: data
+        - mountPath: /mattermost/logs
+          name: logs
+        - mountPath: /mattermost/config
+          name: config
+        - mountPath: /mattermost/plugins
+          name: plugins
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+      - name: logs
+        persistentVolumeClaim:
+          claimName: logs
+      - name: config
+        persistentVolumeClaim:
+          claimName: config
+      - name: plugins
+        persistentVolumeClaim:
+          claimName: plugins

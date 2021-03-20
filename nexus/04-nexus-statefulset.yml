@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nexus
+  namespace: nexus
+  labels:
+    app: nexus
+    type: statefulset
+spec:
+  serviceName: "nexus"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus
+      type: pod 
+  template:
+    metadata:
+      labels:
+        app: nexus
+        type: pod
+    spec:
+      containers:
+      - name: nexus
+        image: sonatype/nexus3:latest
+        ports:
+        - containerPort: 8081
+        - containerPort: 5000
+        volumeMounts:
+          - mountPath: /nexus-data
+            name: data
+          - mountPath: /opt/sonatype/nexus/deploy
+            name: plugins
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+        - name: plugins
+          persistentVolumeClaim:
+            claimName: plugins

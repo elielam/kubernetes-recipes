@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jenkins
+  namespace: jenkins
+  labels:
+    app: jenkins
+    type: statefulset
+spec:
+  serviceName: "jenkins"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: jenkins
+        type: pod
+    spec:
+      containers:
+      - name: jenkins
+        image: jenkins/jenkins:lts                      
+        ports:
+          - containerPort: 8080
+          - containerPort: 50000
+        volumeMounts:
+        - mountPath: "/var/jenkins_home"
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data

@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redmine
+  namespace: redmine
+  labels:
+    app: redmine
+    type: statefulset
+spec:
+  serviceName: "redmine"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redmine
+      type: pod
+  template:
+    metadata:
+      labels:
+        app: redmine
+        type: pod
+    spec:
+      containers:
+        - name: redmine
+          image: bitnami/redmine:4.1.1-debian-10-r209
+          ports:
+            - containerPort: 3000
+          env:
+          - name: REDMINE_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: redmine
+                key: REDMINE_USERNAME
+          - name: REDMINE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redmine
+                key: REDMINE_PASSWORD
+          - name: REDMINE_DB_POSTGRES
+            valueFrom:
+              secretKeyRef:
+                name: redmine
+                key: REDMINE_DB_POSTGRES
+          - name: REDMINE_DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgres
+                key: POSTGRES_DB
+          - name: REDMINE_DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: postgres
+                key: POSTGRES_USER
+          - name: REDMINE_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres
+                key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/redmine
+            - name: themes
+              mountPath: /opt/bitnami/redmine/public/themes
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+        - name: themes
+          persistentVolumeClaim:
+            claimName: themes

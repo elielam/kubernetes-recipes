@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+    type: configmap
+data:
+  DB_VENDOR: POSTGRES
+  DB_ADDR: postgres
+  DB_SCHEMA: public
+  KEYCLOAK_USER: "admin"
+  PROXY_ADDRESS_FORWARDING: "true"

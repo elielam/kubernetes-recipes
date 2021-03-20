@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: admin
+  namespace: bitwarden
+  labels:
+    app: admin
+    type: statefulset
+spec:
+  serviceName: "admin"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: admin
+        type: pod
+    spec:
+      containers:
+      - name: admin
+        image: bitwarden/admin:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/core
+          name: core
+        - mountPath: /etc/bitwarden/ssl
+          name: ssl
+        # - mountPath: /etc/bitwarden/logs
+        #   name: admin-logs
+      volumes:
+      - name: core
+        persistentVolumeClaim:
+          claimName: core
+      - name: ssl
+        persistentVolumeClaim:
+          claimName: ssl

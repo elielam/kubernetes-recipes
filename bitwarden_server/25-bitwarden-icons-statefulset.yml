@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: icons
+  namespace: bitwarden
+  labels:
+    app: icons
+    type: statefulset
+spec:
+  serviceName: "icons"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icons
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: icons
+        type: pod
+    spec:
+      containers:
+      - name: icons
+        image: bitwarden/icons:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/ssl
+          name: ssl
+      # - mountPath: /etc/bitwarden/logs
+      #   name: icon-logs
+      volumes:
+      - name: ssl
+        persistentVolumeClaim:
+          claimName: ssl

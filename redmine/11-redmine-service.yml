@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redmine
+  namespace: redmine
+  labels:
+    app: redmine
+    type: service
+spec:
+  selector:
+    app: redmine
+    type: pod
+  ports:
+    - port: 3000
+      name: http

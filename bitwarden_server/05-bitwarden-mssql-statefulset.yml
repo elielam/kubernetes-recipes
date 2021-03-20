@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mssql
+  namespace: bitwarden
+  labels:
+    app: mssql
+    type: statefulset
+spec:
+  serviceName: "mssql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mssql
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: mssql
+        type: pod
+    spec:
+      containers:
+      - name: mssql
+        image: bitwarden/mssql:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 1433
+        volumeMounts:
+        - mountPath: /var/opt/mssql/data
+          name: mssql
+        # - mountPath: /var/opt/mssql/log
+        #   name: mssql-logs
+        # - mountPath: /etc/bitwarden/mssql/backups
+        #   name: mssql-backup  
+      volumes:
+      - name: mssql
+        persistentVolumeClaim:
+          claimName: mysql

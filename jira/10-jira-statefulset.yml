@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jira
+  namespace: jira
+  labels:
+    app: jira
+    type: statefulset
+spec:
+  serviceName: "jira"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jira
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: jira
+        type: pod
+    spec:
+      containers:
+      - name: jira
+        image: atlassian/jira-software:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ATL_DB_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_DB_TYPE
+        - name: ATL_DB_DRIVER
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_DB_DRIVER
+        - name: ATL_DB_SCHEMA_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_DB_SCHEMA_NAME
+        - name: ATL_JDBC_URL 
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_JDBC_URL
+        - name: ATL_JDBC_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: ATL_JDBC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD    
+        - name: JVM_MINIMUM_MEMORY
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: JVM_MINIMUM_MEMORY
+        - name: JVM_MAXIMUM_MEMORY
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: JVM_MAXIMUM_MEMORY
+        - name: ATL_PROXY_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_PROXY_PORT
+        - name: ATL_TOMCAT_PORT 
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_TOMCAT_PORT 
+        - name: ATL_TOMCAT_SCHEME  
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_TOMCAT_SCHEME  
+        - name: ATL_TOMCAT_SECURE  
+          valueFrom:
+            configMapKeyRef:
+              name: jira
+              key: ATL_TOMCAT_SECURE
+        volumeMounts:
+        - mountPath: "/var/atlassian/application-data/jira"
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data

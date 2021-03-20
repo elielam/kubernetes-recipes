@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mattermost
+  namespace: mattermost
+  labels:
+    app: mattermost
+    type: configmap
+data:
+  DB_HOST: postgres
+  DB_PORT_NUMBER: "5432"
+  MM_SQLSETTINGS_DATASOURCE: "postgres://mattermost:password@postgres:5432/mattermost?sslmode=disable&connect_timeout=1"

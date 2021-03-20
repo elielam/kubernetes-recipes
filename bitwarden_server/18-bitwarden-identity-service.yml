@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity
+  namespace: bitwarden
+  labels:
+    app: identity
+    type: service
+spec:
+  selector:
+    app: identity
+    type: pod
+  ports:
+  - name: identity
+    port: 5000

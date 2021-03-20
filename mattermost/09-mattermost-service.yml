@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mattermost
+  namespace: mattermost
+  labels:
+    app: mattermost
+    type: service
+spec:
+  selector:
+    app: mattermost
+    type: pod
+  ports:
+  - port: 8065
+    name: http

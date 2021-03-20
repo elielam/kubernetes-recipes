@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: gitlab
+  labels:
+    app: gitlab
+    type: persistentvolumeclaim
+spec:
+  storageClassName: gitlab
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logs
+  namespace: gitlab
+  labels:
+    app: gitlab
+    type: persistentvolumeclaim
+spec:
+  storageClassName: gitlab
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+name: config
+namespace: gitlab
+labels:
+app: gitlab
+type: persistentvolumeclaim
+spec:
+storageClassName: gitlab
+accessModes:
+- ReadWriteOnce
+resources:
+requests:
+storage: 10Gi

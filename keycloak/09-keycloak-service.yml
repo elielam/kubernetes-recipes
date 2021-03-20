@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+    type: service
+spec:
+  selector:
+    app: keycloak
+    type: pod
+  ports:
+  - name: http
+    port: 8080

@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: gitlab
+  namespace: gitlab
+  labels:
+    app: gitlab
+    type: service
+spec:
+  selector:
+    app: gitlab
+    type: pod
+  ports:
+    - port: 80
+      name: http
+    - port: 22
+      name: ssh
+    - port: 5050
+      name: registry

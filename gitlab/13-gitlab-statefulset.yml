@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitlab
+  namespace: gitlab
+  labels:
+    app: gitlab
+    type: statefulset
+spec:
+  serviceName: "gitlab"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab
+      type: pod
+  template:
+    metadata:
+      labels:
+        app: gitlab
+        type: pod
+    spec:
+      containers:
+      - name: gitlab
+        image: gitlab/gitlab-ee:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        - containerPort: 22
+        - containerPort: 5050
+        env:
+        - name: GITLAB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gitlab
+              key: GITLAB_ROOT_PASSWORD
+        - name: GITLAB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: gitlab
+              key: GITLAB_HOST
+        - name: GITLAB_DATABASE_ADAPTER
+          valueFrom:
+            configMapKeyRef:
+              name: gitlab
+              key: GITLAB_DATABASE_ADAPTER
+        - name: GITLAB_DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: gitlab
+              key: GITLAB_DATABASE_HOST
+        - name: GITLAB_DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: gitlab
+              key: GITLAB_DATABASE_PORT
+        - name: GITLAB_DATABASE_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: GITLAB_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD
+        - name: GITLAB_DATABASE_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_DB
+        - name: GITLAB_OMNIBUS_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: gitlab
+              key: CONFIG.RB
+        volumeMounts:
+        - mountPath: /var/opt/gitlab
+          name: data
+        - mountPath: /var/log/gitlab
+          name: logs
+        - mountPath: /etc/gitlab
+          name: config
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+      - name: logs
+        persistentVolumeClaim:
+          claimName: logs
+      - name: config
+        persistentVolumeClaim:
+          claimName: config

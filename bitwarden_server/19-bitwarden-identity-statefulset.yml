@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: identity
+  namespace: bitwarden
+  labels:
+    app: identity
+    type: statefulset
+spec:
+  serviceName: "identity"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: identity
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: identity
+        type: pod
+    spec:
+      containers:
+      - name: identity
+        image: bitwarden/identity:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/identity
+          name: identity
+        - mountPath: /etc/bitwarden/core
+          name: core
+        - mountPath: /etc/bitwarden/ssl
+          name: ssl
+      volumes:
+      - name: identity
+        persistentVolumeClaim:
+          claimName: identity
+      - name: core
+        persistentVolumeClaim:
+          claimName: core
+      - name: ssl
+        persistentVolumeClaim:
+          claimName: ssl

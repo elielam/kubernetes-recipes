@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: gitlab
+  labels:
+    app: postgres
+    type: service
+spec:
+  selector:
+    app: postgres
+    type: pod
+  ports:
+    - port: 5432
+      name: postgres

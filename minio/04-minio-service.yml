@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio
+  namespace: minio
+  labels:
+    app: minio
+    type: service
+spec:
+  selector:
+    app: minio
+    type: pod
+  ports:
+    - port: 9000
+      name: http

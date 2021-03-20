@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+  labels:
+    app: nextcloud
+    type: statefulset
+spec:
+  serviceName: "nextcloud"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud
+      type: pod
+  template:
+    metadata:
+      labels:
+        app: nextcloud
+        type: pod
+    spec:
+      containers:
+      - name: nextcloud
+        image: nextcloud:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud
+              key: NEXTCLOUD_ADMIN_USER
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud
+              key: NEXTCLOUD_ADMIN_PASSWORD
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: POSTGRES_HOST
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_DB
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: POSTGRES_PASSWORD
+        - name: NEXTCLOUD_TRUSTED_DOMAINS
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: NEXTCLOUD_TRUSTED_DOMAINS
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: REDIS_HOST
+        - name: REDIS_HOST_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: nextcloud
+              key: REDIS_HOST_PORT
+        volumeMounts:
+          - mountPath: /var/www/html/
+            name: config
+          - mountPath: /var/www/html/data/
+            name: data
+          # - mountPath: /var/www/html/config/custom.config.php
+          #   name: custom
+          #   subPath: custom.config.php           
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: config
+      - name: data
+        persistentVolumeClaim:
+          claimName: data
+      # - name: custom
+      #   configMap:
+      #     name: nextcloud
+      #     items:
+      #       - key: custom.config.php
+      #         path: custom.config.php      

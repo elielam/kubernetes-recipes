@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: nexus
+  labels:
+    app: nexus
+    type: persistentvolumeclaim
+spec:
+  storageClassName: nexus
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plugins
+  namespace: nexus
+  labels:
+    app: nexus
+    type: persistentvolumeclaim
+spec:
+  storageClassName: nexus
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

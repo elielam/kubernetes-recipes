@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+  namespace: bitwarden
+  labels:
+    app: admin
+    type: service
+spec:
+  selector:
+    app: admin
+    type: pod
+  ports:
+  - name: admin
+    port: 5000

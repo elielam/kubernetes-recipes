@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: attachments
+  namespace: bitwarden
+  labels:
+    app: attachments
+    type: statefulset
+spec:
+  serviceName: "attachments"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: attachments
+      type: pod      
+  template:
+    metadata:
+      labels:
+        app: attachments
+        type: pod
+    spec:
+      containers:
+      - name: attachments
+        image: bitwarden/attachments:1.32.0
+        envFrom:
+        - configMapRef:
+            name: bitwarden
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /etc/bitwarden/core/attachments
+          name: attachments
+      volumes:
+      - name: attachments
+        persistentVolumeClaim:
+          claimName: attachments
